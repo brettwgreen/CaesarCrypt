@@ -11,11 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Random;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,52 +21,14 @@ public class MainActivity extends AppCompatActivity {
     private String randomCipher = "";
     private static final String TAG = "CaesarCipher";
 
-    private void RandomizeCipher(){
-        randomCipher = "";
-        ArrayList<Character> alphaArray = new ArrayList<>();
-        for (int i=0; i<alpha.length(); i++){
-            alphaArray.add(alpha.charAt(i));
-        }
-        Random rand = new Random();
-        int randomNum;
-        while (alphaArray.size() > 0) {
-            if  (alphaArray.size() == 1) {
-                randomNum = 0;
-            }
-            else {
-                randomNum = rand.nextInt(alphaArray.size() - 1) + 1;
-                if (randomNum > alphaArray.size() - 1) {
-                    randomNum = alphaArray.size() - 1;
-                }
-            }
-            Log.d(TAG, "alphaArray size: " + alphaArray.size());
-            Log.d(TAG, "randomNum: " + randomNum);
-
-            randomCipher += alphaArray.get(randomNum);
-            alphaArray.remove(randomNum);
-        }
-    }
-
     private void EncodeMessage(Editable s) {
         TextView encryptedMessage = (TextView)findViewById(R.id.encryptedMessage);
-        String eMsg = "";
-        for (int i=0; i < s.length(); i++) {
-            String character = Character.toString(s.charAt(i));
-            String charUpper = character.toUpperCase();
-            boolean lowerCase = false;
-            if (!charUpper.equals(character)) {
-                lowerCase = true;
-            }
-            int index = alpha.indexOf(charUpper);
-            if (index == -1) {
-                eMsg += character;
-            }
-            else {
-                String eChar = Character.toString(randomCipher.charAt(index));
-                eMsg += lowerCase ? eChar.toLowerCase() : eChar;
-            }
-        }
-        encryptedMessage.setText(eMsg);
+        encryptedMessage.setText(Cipher.EncryptMessage(s.toString(), alpha, randomCipher));
+    }
+    private void NewCipher() {
+        TextView code = (TextView)findViewById(R.id.code);
+        randomCipher = Cipher.RandomizeCipher(alpha);
+        code.setText(randomCipher);
     }
 
     @Override
@@ -99,10 +58,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-                TextView encryptedMessage = (TextView)findViewById(R.id.encryptedMessage);
+                TextView encryptedMessage = (TextView) findViewById(R.id.encryptedMessage);
                 smsIntent.setType("vnd.android-dir/mms-sms");
                 smsIntent.putExtra("sms_body", encryptedMessage.getText().toString());
                 startActivity(smsIntent);
+            }
+        });
+        final ImageButton newCipher = (ImageButton)findViewById(R.id.newCipher);
+        newCipher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NewCipher();
             }
         });
 
@@ -118,9 +84,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        TextView code = (TextView)findViewById(R.id.code);
-        RandomizeCipher();
-        code.setText(randomCipher);
+        if (randomCipher.length() == 0) {
+            NewCipher();
+        }
     }
 
     @Override
