@@ -36,6 +36,25 @@ public class Cipher
         return randomCipher;
     }
 
+    public static String CaesarShift(String alpha){
+        String shiftCipher = "";
+        ArrayList<Character> alphaArray = new ArrayList<>();
+        for (int i=0; i<alpha.length(); i++){
+            alphaArray.add(alpha.charAt(i));
+        }
+        Random rand = new Random();
+        int randomNum;
+        randomNum = rand.nextInt(alphaArray.size() - 1);
+
+        for (int i=randomNum; i<alphaArray.size(); i++) {
+            shiftCipher += alphaArray.get(i);
+        }
+        for (int i=0; i<randomNum; i++) {
+            shiftCipher += alphaArray.get(i);
+        }
+        return shiftCipher;
+    }
+
     public static String EncryptMessage(String s, String alpha, String cipher) {
         if (alpha.length() != cipher.length()) {
             throw new IllegalArgumentException("alpha and cipher string must have same length");

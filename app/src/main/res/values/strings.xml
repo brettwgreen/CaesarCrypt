@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">CaesarCrypt</string>
-
     <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
     <string name="action_settings">Settings</string>
     <string name="send">Send Encrypted Message</string>
-
+    <string name="newCipherText">New</string>
+    <string-array name="cipherTypes">
+        <item>Caesar Shift</item>
+        <item>Random Substitution</item>
+    </string-array>
 </resources>
